@@ -25,10 +25,11 @@ const App = () => {
       const addNew = window.confirm(
         `${newName} is already added to phonebook. Do you want to update their phone number?`
       );
+      // Submit a put request
       if (addNew) {
         const id = persons.find((person) => person.name === newName).id;
         // console.log("id is", id);
-        // Update Backend
+        // Update Backend - Submit PUT request
         phonebook
           .updateContact(id, {
             name: newName,
@@ -36,9 +37,13 @@ const App = () => {
           })
           .then((data) => {
             // Update Frontend, if backend request was successful
-
+            console.log("Updating front end", data);
             setPersons(
-              persons.filter((person) => person.id !== data.id).concat(data)
+              persons.filter((person) => person.id != data.id).concat(data)
+            );
+            console.log(
+              "After updating front end, this is what I have locally stored",
+              persons
             );
             setSuccessMessage(`Successfully updated ${data.name}`);
             setTimeout(() => {
@@ -54,15 +59,29 @@ const App = () => {
         name: newName,
         number: newNumber,
       };
-      phonebook.createContact(newContact).then((data) => {
-        setPersons(persons.concat(data));
-        setSuccessMessage(`Successfully added ${data.name}`);
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 5000);
-        setNewName("");
-        setNewNumber("");
-      });
+      phonebook
+        .createContact(newContact)
+        .then((data) => {
+          console.log(
+            "creating contact successfully has returned the following data",
+            data
+          );
+          setPersons(persons.concat(data));
+          setSuccessMessage(`Successfully added ${data.name}`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
+          setNewName("");
+          setNewNumber("");
+        })
+        .catch((error) => {
+          console.log("error is ", error);
+          const info = error.response.data;
+          console.log(info);
+
+          setErrorMessage(error.response.data);
+          setTimeout(() => setErrorMessage(null), 5000);
+        });
     }
   };
 

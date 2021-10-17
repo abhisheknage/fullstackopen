@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "http://localhost:3001/persons";
+const baseURL = "/api/persons";
 
 const getAll = () => {
   const request = axios.get(baseURL);
@@ -8,12 +8,9 @@ const getAll = () => {
 };
 
 const createContact = async (newContact) => {
-  newContact = {
-    ...newContact,
-    id: Math.round(Math.random() * 10000),
-  };
-  const request = axios.post(baseURL, newContact);
-  return request.then((res) => res.data);
+  // const request = axios.post(baseURL, newContact);
+  // return request.then((res) => res.data);
+  return axios.post(baseURL, newContact).then((res) => res.data);
 };
 
 const deleteContact = async (id) => {
